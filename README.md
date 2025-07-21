@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Interview Agent – AI-Powered Interview Preparation Tool
+
+**Interview Agent** is an AI-driven web application built with **Next.js** that helps users prepare for job interviews through intelligent simulations. The tool generates domain-specific questions, simulates interview interactions, and is designed to provide actionable feedback to improve confidence and performance.
+
+---
 
 ## Getting Started
 
