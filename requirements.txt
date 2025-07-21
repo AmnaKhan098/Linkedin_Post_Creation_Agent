@@ -1,0 +1,7 @@
+Flask
+beautifulsoup4
+google-ai-generativelanguage
+google-generativeai
+requests
+pandas
+python-dotenv

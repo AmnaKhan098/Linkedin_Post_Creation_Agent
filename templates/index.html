@@ -1,0 +1,196 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaseToPost - LinkedIn Post Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+     <!-- Fast API -->
+     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header/Navigation -->
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center">
+                            <i class="fas fa-link text-blue-600 text-2xl mr-2"></i>
+                            <span class="font-bold text-xl text-gray-800">CaseToPost</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <a href="/" class="hidden sm:block text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="/case-studies" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">Case Studies</a>
+                        <a href="/" class="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Generate</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow p-2 md:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <!-- Hero Section -->
+                <div class="text-center py-12">
+                    <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+                        Transform Case Studies into<br>
+                        <span class="text-blue-600">Engaging LinkedIn Posts</span>
+                    </h1>
+                    <p class="mt-6 max-w-lg mx-auto text-xl text-gray-500">
+                        Paste a link to any case study and our AI will generate an attention-grabbing LinkedIn post in seconds.
+                    </p>
+                </div>
+
+                <!-- Generator Tool -->
+                <div class="bg-white shadow rounded-lg overflow-hidden max-w-4xl mx-auto mb-12">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="mb-6">
+                            <label for="url" class="block text-sm font-medium text-gray-700">Case Study URL</label>
+                            <div class="mt-1 flex rounded-md shadow-sm">
+                                <input type="text" name="url" id="url" class="focus:ring-blue-500 focus:border-blue-500 flex-grow block w-full rounded-md sm:text-sm border-gray-300 p-3" placeholder="https://example.com/case-study" value="{{ prefill_url }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700">Prompt Style</label>
+                            <div class="mt-2 flex gap-4">
+                                <div class="flex items-center">
+                                    <input id="prompt-two" name="prompt-type" type="radio" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                    <label for="prompt-two" class="ml-3 block text-sm font-medium text-gray-700">
+                                        Conversational Style
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="prompt-one" name="prompt-type" type="radio" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+                                    <label for="prompt-one" class="ml-3 block text-sm font-medium text-gray-700">
+                                        Professional Style
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <button id="generate-btn" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <i class="fas fa-magic mr-2"></i>
+                                Generate LinkedIn Post
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div id="results-container" class="bg-white shadow rounded-lg overflow-hidden max-w-4xl mx-auto mb-12 hidden">
+                    <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Your Generated LinkedIn Post
+                        </h3>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6">
+                        <div id="loading" class="flex justify-center items-center py-12 hidden">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                        </div>
+                        <div id="result-content">
+                            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                <p id="post-content" class="whitespace-pre-line text-gray-700"></p>
+                            </div>
+                            <div class="mt-5 flex justify-between">
+                                <button id="copy-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <i class="far fa-copy mr-2"></i>
+                                    Copy to Clipboard
+                                </button>
+                                <button id="regenerate-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <i class="fas fa-redo mr-2"></i>
+                                    Generate Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Features Section -->
+                <div class="py-12">
+                    <h2 class="text-3xl font-extrabold text-center text-gray-900">Why Use CaseToPost?</h2>
+                    <div class="mt-10">
+                        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                            <div class="pt-6">
+                                <div class="flow-root bg-white rounded-lg px-6 pb-8">
+                                    <div class="-mt-6">
+                                        <div>
+                                            <span class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-md shadow-lg">
+                                                <i class="fas fa-bolt text-white text-xl"></i>
+                                            </span>
+                                        </div>
+                                        <h3 class="mt-8 text-lg font-medium text-gray-900">Save Time</h3>
+                                        <p class="mt-5 text-base text-gray-500">
+                                            Transform case studies into engaging LinkedIn posts in seconds, not hours.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-6">
+                                <div class="flow-root bg-white rounded-lg px-6 pb-8">
+                                    <div class="-mt-6">
+                                        <div>
+                                            <span class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-md shadow-lg">
+                                                <i class="fas fa-chart-line text-white text-xl"></i>
+                                            </span>
+                                        </div>
+                                        <h3 class="mt-8 text-lg font-medium text-gray-900">Increase Engagement</h3>
+                                        <p class="mt-5 text-base text-gray-500">
+                                            AI-crafted posts designed to capture attention and drive meaningful interactions.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-6">
+                                <div class="flow-root bg-white rounded-lg px-6 pb-8">
+                                    <div class="-mt-6">
+                                        <div>
+                                            <span class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-md shadow-lg">
+                                                <i class="fas fa-brain text-white text-xl"></i>
+                                            </span>
+                                        </div>
+                                        <h3 class="mt-8 text-lg font-medium text-gray-900">AI-Powered</h3>
+                                        <p class="mt-5 text-base text-gray-500">
+                                            Leverages advanced AI to extract key insights and craft compelling narratives.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+                <div class="flex justify-center space-x-6 md:order-2">
+                    <a href="#" class="text-gray-400 hover:text-gray-500">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-base text-gray-400">
+                        &copy; 2025 CaseToPost. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
